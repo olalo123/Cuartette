@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuartette</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Cinzel:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#120a07;--cream:#eadcb8;--ink:#1b0f0a;--crim:#a31d19;--gold:#d4a22f;--brown:#25150e;--beat:.5s;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--cream);font-family:'Cinzel',Georgia,serif;background:var(--bg) repeating-conic-gradient(from 0deg at 50% -8%,#120a07 0 7deg,#1e100a 7deg 14deg);background-attachment:fixed;min-height:100vh;overflow-x:hidden}
+.bubbles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bubbles span{position:absolute;bottom:-30px;border:1.5px solid rgba(234,220,184,.2);border-radius:50%;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-115vh)}}
+.bulbs{position:relative;z-index:1;height:24px;background:radial-gradient(circle,var(--gold) 0 6px,transparent 7px) 0 50%/42px 24px repeat-x;animation:bl calc(var(--beat)*2) steps(1) infinite}
+.bulbs.b{margin-top:-24px;background:radial-gradient(circle,var(--cream) 0 6px,transparent 7px) 21px 50%/42px 24px repeat-x;animation-name:bl2}
+@keyframes bl{0%{opacity:1}50%{opacity:.12}}@keyframes bl2{0%{opacity:.12}50%{opacity:1}}
+.app{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:26px 20px 50px}
+h1{font-family:'Bowlby One',Impact,sans-serif;font-weight:400;font-size:clamp(46px,11vw,110px);line-height:.92;margin:4px 0 34px;text-align:center;color:var(--cream);transform:rotate(-2deg) skewX(-4deg);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:4px 4px 0 var(--crim),8px 8px 0 var(--gold),11px 11px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:44px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr;gap:38px}}
+.label{position:relative;background:var(--cream);color:var(--ink);border:3px solid var(--crim);outline:2px solid var(--gold);outline-offset:6px;margin:8px;padding:34px 26px 28px;box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.label::after{content:"";position:absolute;inset:7px;border:1px solid rgba(27,15,10,.45);pointer-events:none}
+.label>*{position:relative;z-index:1}
+.art{display:flex;align-items:center;gap:14px;color:var(--crim);font-weight:700;font-size:15px;letter-spacing:.28em;text-transform:uppercase;text-align:center}
+.art::before,.art::after{content:"";flex:1;height:1px;background:var(--ink);opacity:.55}
+.ti{font-family:'Bowlby One',Impact,sans-serif;font-style:italic;text-align:center;font-size:clamp(30px,6vw,60px);line-height:1.04;margin:16px 0 22px;word-break:break-word;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;color:var(--cream);text-shadow:3px 3px 0 var(--crim),5px 5px 0 var(--ink)}
+.mid{display:flex;gap:22px;justify-content:center;align-items:flex-end;margin-bottom:26px;flex-wrap:wrap}
+.medal{width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--ink);box-shadow:inset 0 0 0 5px var(--cream),inset 0 0 0 7px var(--ink);background:var(--cream)}
+.medal.m1{background:var(--crim);color:var(--cream);box-shadow:inset 0 0 0 5px var(--crim),inset 0 0 0 7px var(--cream);animation:pul var(--beat) ease-out infinite}
+.medal.m2{background:var(--gold)}
+@keyframes pul{0%{transform:scale(1.09)}100%{transform:scale(1)}}
+.medal span{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+.medal b{font-family:'Bowlby One',Impact,sans-serif;font-weight:400;font-size:26px;line-height:1.15}
+.glass{text-align:center}
+.glass svg{width:78px;height:auto;display:block;margin:0 auto}
+.glass small{display:block;margin-top:4px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+#lq{transition:transform .8s cubic-bezier(.3,.8,.3,1)}
+.player{aspect-ratio:16/9;border:6px solid var(--ink);box-shadow:0 0 0 3px var(--gold),0 0 0 5px var(--ink);background:#000;display:flex;align-items:center;justify-content:center;margin:0 5px 30px}
+.player iframe{width:100%;height:100%;border:0}
+.empty{background:var(--brown);color:var(--cream);width:100%;height:100%;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.empty p{margin:0;font-size:15px;line-height:1.45;font-weight:600}
+.btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+button,.btn{font:inherit;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:var(--cream);border:3px solid var(--ink);padding:12px 22px;cursor:pointer;text-decoration:none;display:inline-block;transform:skewX(-9deg);box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;border-radius:0}
+button:hover,.btn:hover{transform:skewX(-9deg) translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+button:active,.btn:active{transform:skewX(-9deg) translate(4px,4px);box-shadow:none}
+.go{background:var(--crim);color:var(--cream);flex:1;min-width:190px;font-size:17px}
+.yt{background:var(--gold)}
+.empty .btn,.empty button{box-shadow:4px 4px 0 var(--gold);border-color:var(--gold)}
+input,textarea{font:inherit;font-size:15px;font-weight:600;background:#f7efd8;color:var(--ink);border:2px solid var(--ink);padding:9px 11px;border-radius:0;outline:none;width:100%}
+input:focus,textarea:focus{border-color:var(--crim)}
+textarea{min-height:80px;margin-top:8px}
+details{margin-top:30px;border-top:1px solid rgba(27,15,10,.5);padding-top:14px}
+summary{cursor:pointer;font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--crim);text-align:center}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.f .w{grid-column:1/-1}
+aside{background:var(--brown);border:3px solid var(--gold);outline:2px solid var(--crim);outline-offset:5px;margin:8px;padding:18px 0 6px;box-shadow:8px 8px 0 var(--ink)}
+aside h2{font-family:'Bowlby One',Impact,sans-serif;font-weight:400;font-size:24px;margin:0 18px 2px;color:var(--gold)}
+.sub{display:block;margin:0 18px 12px;font-size:11px;color:#b9a67a;letter-spacing:.2em;text-transform:uppercase}
+.hist{list-style:none;margin:0;padding:0;max-height:62vh;overflow:auto}
+.hist li{display:flex;gap:12px;padding:11px 18px;border-top:1px dashed rgba(212,162,47,.4);cursor:pointer}
+.hist li:hover{background:#34200f}.hist li.on{background:var(--crim)}
+.hist .n{font-family:'Bowlby One',Impact,sans-serif;color:var(--gold);width:28px;font-size:17px}.hist li.on .n{color:var(--cream)}
+.hist b{font-size:15px;font-weight:700;display:block;letter-spacing:.04em}
+.hist small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#b9a67a}.hist li.on small{color:var(--cream)}
+.tools{display:flex;gap:12px;justify-content:center;align-items:center;margin:-6px 0 20px}.tools select{font:inherit;font-weight:700;font-size:13px;background:#f7efd8;color:var(--ink);border:2px solid var(--ink);padding:9px 10px;border-radius:0}.tools button{padding:9px 16px;font-size:12px;transform:none}
+</style></head><body>
+<div class="bubbles" id="bb"></div>
+<div class="bulbs"></div><div class="bulbs b"></div>
+<div class="app">
+<h1>CUARTETTE</h1>
+<div class="grid"><main><div class="label">
+<div class="art" id="ar"></div><div class="ti" id="ti"></div>
+<div class="mid"><div class="medal m1"><span>BPM</span><b id="bp"></b></div>
+<div class="glass"><svg viewBox="0 0 90 130" aria-hidden="true"><defs><clipPath id="cp"><path d="M10 6H80L72 124Q71 128 66 128H24Q19 128 18 124Z"/></clipPath></defs>
+<g clip-path="url(#cp)"><rect width="90" height="130" fill="rgba(234,220,184,.08)"/><path id="lqp" fill="#2a1007"/><g id="bbs"></g><path id="fm" fill="#eadcb8"/><g id="ic1"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="rgba(234,220,184,.35)" stroke="#eadcb8" stroke-width="1.5"/></g><g id="ic2"><rect x="-9" y="-9" width="18" height="18" rx="4" fill="rgba(234,220,184,.35)" stroke="#eadcb8" stroke-width="1.5"/></g></g>
+<path d="M10 6H80L72 124Q71 128 66 128H24Q19 128 18 124Z" fill="none" stroke="#1b0f0a" stroke-width="3.5"/></svg><small>Sonaron <span id="cnt"></span></small></div>
+<div class="medal m2"><span>Tono</span><b id="ky"></b></div></div>
+<div class="tools"><button id="tap">Tocá el ritmo</button><button id="nocu">No es cuarteto</button><select id="ksel"></select></div>
+<div class="player" id="pl"></div>
+<div class="btns"><button id="prev">← Anterior</button><button class="go" id="next">Servime otro →</button><a class="btn yt" id="yt" target="_blank" rel="noopener">Ver en YouTube ↗</a></div>
+<details><summary>Agregar temas o links</summary>
+<div class="f"><input id="fa" placeholder="Artista"><input id="ft" placeholder="Título"><input id="fb" placeholder="BPM" type="number"><input id="fk" placeholder="Tono (ej. Am)"><input class="w" id="fy" placeholder="Link de YouTube (opcional)"></div>
+<div class="btns" style="margin-top:14px"><button id="add">Agregar</button></div>
+<textarea id="bulk" placeholder="Varios de una, uno por línea:&#10;Artista - Título | link de YouTube"></textarea>
+<div class="btns" style="margin-top:12px"><button id="imp">Importar lista</button></div></details>
+</div></main>
+<aside><h2>LO QUE YA SONÓ</h2><span class="sub">Tocá uno para volver</span><ul class="hist" id="hs"></ul></aside></div></div>
+<script>
+const S=[];
+const V={
+"Rodrigo":["Ocho Cuarenta","Soy Cordobés","Lo Mejor del Amor","Y Voló, Voló","Cómo Olvidarla","El Amor Sobre Toda Diferencia Social","La Chica de Mi Barrio","Si Tú Supieras","Lecho Vacío","En Mi Cama Una Cualquiera","Ella Toca el Clarinete","Boby","Yerba Mala","Qué Ironía"],
+"La Mona Jiménez":["La Flaca Marta","Linterna de los Afiebrados","Dos Margaritas","El Renegado","Sé Que Te Enamorarás","Despierta Corazón","Me Desespero","Tinta China","Beso a Beso","El Federal","Se Fue","Ramito de Violetas","Adrenalina","Por Qué Te Vas","Me Mata","Quién Se Ha Tomado Todo el Vino","Soy Argentino","Atrevida","Y Ya Ves","Madre Soltera","Paloma Loca","Luna","Luis","Nueve y Media","Escríbele una Carta","Ruleta Rusa","Bésame","El Enamorado","Jaque Mate","Estrella de la Mañana","Si Te Vas","Dos en Uno","Después de un Año","Pero Sé Que Te Enamoras","Intentemos","Celosa","Agujita de Oro","La Huella","Aventurera","El Divorcio"],
+"Fernando Bladys":["Bella","Un Buen Perdedor","Títere","25 Rosas","Velocidad, Ayúdame","Por Si Vuelves","Tirá Para Arriba","Septiembre","Si No Te Hubieras Ido","Dónde Estará Mi Primavera","Campanas en la Noche","La Quiero a Morir","De Ella Lo Más Amado","No Me Extraña Nada","Un Mal Sueño","Somos Tres","Llorando","Porque Te Amo","De Piel a Piel","Ya No Voy a Pedirte","Decir Lo Siento","Casi Me Mato","El Mismo Tren","Fuiste Mía en Septiembre","Yo Fui el Segundo en Tu Vida","Prohibido Enamorarnos","Lady Lady","Hablando de Ti","Un Loco en la Ciudad","La Última Cuenta Regresiva","Pivot","Mi Fiel Amante","Un Loco Feliz","Las Cuentas del Alma","Vete a Volar a Otro Cielo","Yo Te Pido Sálvame","Esa Vez Otra Vez","Por Alguien Que Se Fue","Mi Universo","El Calor de Tu Cariño","Quiero Tenerte Conmigo","Por Amor a Dios","Yo Te Daré","Soy un Casanova","Noche de Amor","Hoy Vine con Él","Sólo Mía","Gitanilla","No Quiero Amarte","El Desengaño","Carta en Do Mayor","No Vale la Pena Perdonarte Todo","Pero Mi Cuerpo Grita","Louis","El Rey de la Noche","Falsas Promesas","Amame, Odiame","Junto a Vos","Pecado Original","Qué Hiciste de Mí","Julieta"],
+"Ulises Bueno":["Piel de Niña","Amante Tú, Amante Él","Sin Miedo a Nada","Yo Volveré","La Niña de los Ojos Tristes","Extrañándote","Enamorada","Fondo Blanco","Perros de la Noche","Como Le Digo Yo","Cadena Perpetua","Humíllate","Durmiendo en Tu Ombligo","Mundología","Andate Loca","Esa Hembra Es Mala","Cómo Estás","Gotitas","La Soledad","Tus 5 Minutos","Por una Pildorita","Condena y Libertad","Te Cambio por Otra","Gracias a Dios","Me Gusta Esa Mujer","Cordobés y Cuartetero","Tu Mejor Amiga","Y Se Marchó","Unidos para Siempre","Te Extraño Tanto","Ahora Que Has Vuelto","Cuéntame","A la Mujer de un Preso","Amor sin Destino","Contrabando de Sandía","La Gorda","La Lengüita","Por Esa Mujer","Media Vida","Nadie Muere Mocho","A Puerta Cerrada","Baila sin Parar","Entre Sábanas Blancas","Ese Soy Yo","Hoy Quiero Beber","La Marca de la Alianza","Por un Viejo Amor","Sapo de Otro Pozo","Te Prohíbo","Ahora Me Toca a Mí","Cómo Le Explico","Dale Vieja Dale","Dime Qué Tengo Que Hacer","El Chamán","Esa Mujer","Incompleto","Las Alas de Mi Amante","Mamita","Mientes","Si Tú Te Vas","Sos un Caramelito","Amante Enemiga","Chau Gracias","Historia de Amor","Te Regalo Mi Canción","Mi Reina","Estafadora de Amor","El Tren de la Vida","Mátame de Amor","Ella Es Tuya y Mía","Corazón Mágico","Perdóname","Me Da Rabia"],
+"Chébere":["Aún Es Joven, Señora","Soy un Títere","El Desengaño","Digo Que Viva el Amor","El Mismo Tren","Igual que una Cualquiera","La Negra Rockera","Mal Agradecida","No Sé Cómo Tú Podías","Ojo por Ojo, Diente por Diente","Qué Gustito Da","Se Marchó sin Decir Adiós","Negrito Cumba Cumba","Volveré","Corazón de Roca","La Blusa Azul","Odio los Lunes","Pégame Tu Vicio","Baile Caliente","Giro Giro","La Manito","Hasta Que Te Conocí","Prohibida","Tú a Fuego Lento","Corazón Fracturado","Magdalena","Corazón Cautivo","Luna, Serena y Sola","Sueño Contigo","Esta Noche Pago Yo","La Copa Rota","Los Hermanos Pinzones","Tú Me Quemas","Te Vas en Palabras"],
+"Trulalá":["El Kiki","Tan Que Tan","Mi Tío Es un Ají","La Gata Me Vuelve Loco","Mi Novia Escandalosa","Con Qué Derecho","La Nena Quiere Guerra","Rebeca la Muele","Con la Música en la Sangre","Canción para la Amada Mía","En Aquel Rincón","El Orgullo de Tu Amor","Esa Chica Lara La La","La Nena Cuartetera","La Gaita de la Cenicienta","Yo Sentado en la Tapia","Tu Primera Vez","La Flauta de Bartolo","Bailando con la Tana","Para Vivir la Vida","Es Ella la Que Quiere","La Batea","Yoli la Matadora","Cumbia de la Enamorada","Ha Vuelto a Robar","Que Nadie Sepa Mi Sufrir","Pequeña Mi Dueña","Sé Que Te Quieres Marchar","Mil Veces Atrapado","Bailarín y Cuartetero","Elizabeth","Si No Voy al Baile Me Muero","Te Quiero Tanto","El Diario de Hoy"],
+"Carlitos Rolán":["Con Ritmo de Acordeón","Sácame el Nene a Pasear","Que Llamen los Bomberos","Ando de Borrachera","Siga el Baile","Es un Lamento de Amor","Clavelito Chino","En un Pueblito de Andalucía","Castañuelas","Bailando con las Dolores","La Pulguita","Que Se Viene el Agua","No Puedo Vivir Solito","Don Goyo","Yo Te Veo Desinflado","Mete y Saca","El Cuartetazo","El Baile del Perrito","Senderito de Amor","El Paraguas","Por Culpa del Bichito","El Sombrero Guayabero","La Cajita Angelical","El Turco Abdón","Mueve Tu Cinturita","Mamá Vieja","Me Picó un Mosquito","Valentín sin Peluquín","Si Quieres Ser Feliz Ven a Bailar","Llegó el Trencito del Amor","La Gaita del Cuchi Cuchi","Me Voy a Borombonear","El Burro de Don Pascual","Ay Qué Linda Mi Vecina","Dale al Borom Bom Bom","El Mete Mete","Camarón","Como Yo Sé Querer"],
+"Pelusa":["Hola Niña","Si Te Agarro con Otro Te Mato","Creo en Ti, Argentina","Eres una Flor, una Estrella, la Luz","Con Todo el Amor Que Yo Puedo","Háblame de la Vida","Loco y Enfermo","Mirta Me Enseñó","Sé Yo Sé","Pelusa Aquí Está","Píntame con Besos","Mi Amor Es Algo Grande","Alguien Cantó","Pero Nunca Cambiarás","Cuando Tú No Estás","Adorada Inés","Bajo la Cama","Símbolo Sexual","Amenazándote","Velitas de Papel","Amor Desesperado","Basta de Andar","Ella Es un Amor","Corazón en la Calle","Luna Llena","Cayó el Amor","Hay un Tren a las Cinco","Cama y Mesa","No Tengo Más para Darte","Amor Aventurero","Rompamos el Contrato","Mi Niña Veneno","Corazón de Acero"],
+"Gary":["Te Burlaste","La Trompeta del Abuelo","Su Barca No Está","La Ropa de Mi Madre","Por Si No la Cuidas","Ay Muchacha","Me Quemas Como el Fuego","Como Campana","Un Cigarrillo y Te Vas","Te Veo Ilusionada","Detrás de la Luna","Hey Tú","Aguante Jacinto","Mentirosa y Adorable","Cuánto Te Amo","Feíto Feíto","Ángel","Engrupida","Todo, Todo, Todo","Mala Cabeza","Señora Mía","Una Lágrima Vio","El Hijo del Sábado","Hay un Ruido en la Línea","Le Dicen la Fea","La Novia","Solo Tú, Solo Yo"],
+"El Negro Videla":["Ahora Que Tengo Tu Cariño","Sé Que Tienes Que Elegir","Como un Lobo en Celo","Soledad","Cenizas Quedan","Nadie Como Tú","La Faldita","Marina","El Cantinero","Bomba","Como Camina María","Debo Hacerlo Todo","Ni Tú Ni Ella","Gitana","Separados","Sábado, Domingo y Lunes","Pachi Pachi","Qué Momento","Soltero y Sabroso","La Ventanita","El Hijo Mío","Discúlpame","Quisiera Ser Poeta","Me Vengo Cayendo","Porque Eres Linda","La Negra","La Negra Chula","Después de Ti, Qué","La Flaca Raquel","Blanca Luna","El Dolorcito","Hoy Te Ríes de Mí","La Rubia","Eternamente"],
+"Toro Quevedo":["Que No Te Puedo Olvidar","Amor Prohibido","Yo Sin Ti, Tú Sin Mí","Perdido por Perdido","Líneas de Amor","Mientras Viva Te Amaré","Catástrofe","Cuerpo sin Alma","Envenéname","Me Engañaste Tú","Quítame la Sed de Amarte","La Culpa Fue Mía","Mi Mayor Venganza","Amiga de Mi Soledad","Con el Alma Desnuda","Me Estoy Volviendo Loco","Fuiste Mía en Septiembre","Perdóname Todo","Veinticinco Rosas","Me Falta Tu Amor","Golpes Bajos","No Me Dejes de Amar","Ya Ves, Ya Ves","Puedes Contar Conmigo","Leña Seca","Corazón Cautivo","Si Estoy Loco","Ángel","Celos","Como Todos","Cuatro Segundos","Déjame Intentar","Diles","Dos Mujeres","Dulce Locura","Inmortal","No La Beses","Tu Hipocresía","Mátame","Miéntete"]
+};
+Object.entries(V).forEach(([a,l])=>l.forEach(t=>S.push([a,t,0,""])));
+const L=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},W=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let songs=S.map(([a,t,b,k])=>({a,t,b,k})).concat(L("cq_extra")||[]);
+let links=L("cq_links")||{},hist=[],pos=-1;
+const id=s=>s.a+"|"+s.t,$=x=>document.getElementById(x);
+const vid=u=>{const m=(u||"").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);return m&&m[1]};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+for(let i=0;i<18;i++){const b=document.createElement("span"),z=6+Math.random()*16;b.style.cssText="left:"+Math.random()*100+"%;width:"+z+"px;height:"+z+"px;animation-duration:"+(14+Math.random()*18)+"s;animation-delay:-"+Math.random()*30+"s";$("bb").appendChild(b)}
+const hid=L("cq_hide")||[];songs=songs.filter(s=>!hid.includes(id(s)));
+$("nocu").onclick=()=>{const s=hist[pos];hid.push(id(s));W("cq_hide",hid);songs=songs.filter(x=>x!==s);hist.splice(pos,1);pos--;next()};
+const meas=L("cq_meas")||{},tried={};
+const M=s=>Object.assign({b:s.b,k:s.k},meas[id(s)]||{});
+function meta(s){const m=M(s);$("bp").textContent=m.b?(m.m?"":"~")+m.b:"?";$("ky").textContent=m.k||"?";$("ksel").value=m.k||"";document.documentElement.style.setProperty("--beat",(60/(m.b>40?m.b:120)).toFixed(3)+"s")}
+function setM(s,o){meas[id(s)]=Object.assign(meas[id(s)]||{},o,{m:1});W("cq_meas",meas);meta(s)}
+async function look(s){const k=id(s);if(meas[k]||tried[k])return;tried[k]=1;try{
+const q='recording:"'+s.t+'" AND artist:"'+s.a+'"';
+const j=await(await fetch("https://musicbrainz.org/ws/2/recording/?fmt=json&limit=6&query="+encodeURIComponent(q))).json();
+const ids=(j.recordings||[]).filter(r=>r.score>=85).map(r=>r.id);if(!ids.length)return;
+const d=await(await fetch("https://acousticbrainz.org/api/v1/low-level?recording_ids="+ids.join(";"))).json();
+for(const i of ids){const o=d[i]&&(d[i]["0"]||d[i]);if(o&&o.rhythm&&o.tonal&&o.rhythm.bpm){meas[k]={b:Math.round(o.rhythm.bpm),k:o.tonal.key_key+(o.tonal.key_scale=="minor"?"m":"")};W("cq_meas",meas);if(hist[pos]===s)meta(s);return}}
+}catch(e){}}
+const KS=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+$("ksel").innerHTML='<option value="">Tono</option>'+KS.map(k=>'<option>'+k+'</option><option>'+k+'m</option>').join("");
+$("ksel").onchange=e=>setM(hist[pos],{k:e.target.value});
+let taps=[];$("tap").onclick=()=>{const n=Date.now();if(taps.length&&n-taps[taps.length-1]>2000)taps=[];taps.push(n);taps=taps.slice(-9);if(taps.length>=3)setM(hist[pos],{b:Math.round(60000/((taps[taps.length-1]-taps[0])/(taps.length-1)))})};
+let cur=.04,tgt=.04,tt=0;
+const SN="http://www.w3.org/2000/svg",bub=[];
+for(let i=0;i<7;i++){const c=document.createElementNS(SN,"circle");c.setAttribute("fill","none");c.setAttribute("stroke","rgba(234,220,184,.55)");c.setAttribute("stroke-width",".8");$("bbs").appendChild(c);bub.push({c,x:20+Math.random()*50,y:60+Math.random()*60,r:1+Math.random()*1.6,v:.25+Math.random()*.4})}
+const lvl=r=>.30+.62*Math.pow(Math.min(r,1),.6);
+function draw(){tt+=.03;const d=tgt-cur;cur+=d*.045;const mv=Math.min(1,Math.abs(d)*14),sy=124-cur*118,amp=1+mv*3.2;
+let top="";for(let x=0;x<=90;x+=5)top+=(x?"L":"M")+x+" "+(sy+Math.sin(x*.13+tt*2.2)*amp).toFixed(2);
+$("lqp").setAttribute("d",top+"L90 140L0 140Z");
+let fm=top;for(let x=90;x>=0;x-=5)fm+="L"+x+" "+(sy+3.6+Math.sin(x*.13+tt*2.2+.8)*amp).toFixed(2);
+$("fm").setAttribute("d",fm+"Z");
+[["ic1",31,0,-12],["ic2",57,2.1,10]].forEach(([k,x,p,r0])=>{const bob=Math.sin(tt*1.6+p)*1.6+Math.sin(tt*2.7+p)*mv*2.5,rot=r0+Math.sin(tt*1.1+p)*6+Math.max(-25,Math.min(25,d*50));$(k).setAttribute("transform","translate("+(x+Math.sin(tt*.9+p)*1.8).toFixed(2)+" "+(sy+bob-3).toFixed(2)+") rotate("+rot.toFixed(1)+")")});
+bub.forEach(b=>{b.y-=b.v*(1+mv*2);if(b.y<sy+3){b.y=128;b.x=20+Math.random()*50}b.c.setAttribute("cx",(b.x+Math.sin(tt*3+b.r*5)*1.2).toFixed(2));b.c.setAttribute("cy",b.y.toFixed(2));b.c.setAttribute("r",b.r.toFixed(2))});
+requestAnimationFrame(draw)}
+draw();
+function show(){const s=hist[pos];$("ar").textContent=s.a;$("ti").textContent=s.t;meta(s);look(s);
+
+$("cnt").textContent=(pos+1)+"/"+songs.length;
+tgt=lvl((pos+1)/songs.length);
+const q="https://www.youtube.com/results?search_query="+encodeURIComponent(s.a+" "+s.t+" audio oficial");
+const v=vid(links[id(s)]);$("yt").href=v?"https://youtu.be/"+v:q;
+$("pl").innerHTML=v?'<iframe src="https://www.youtube.com/embed/'+v+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>':'<div class="empty"><p>Este tema todavía no tiene video. Buscalo en YouTube, copiá el link y pegalo acá.</p><a class="btn" target="_blank" rel="noopener" href="'+q+'">Buscar en YouTube ↗</a><input id="pu" placeholder="Pegá el link acá"><button id="ps">Guardar y reproducir</button></div>';
+if(!v)$("ps").onclick=()=>{const u=$("pu").value;if(vid(u)){links[id(s)]=u;W("cq_links",links);show()}};
+$("hs").innerHTML=hist.map((h,j)=>'<li data-j="'+j+'" class="'+(j===pos?"on":"")+'"><span class="n">'+(j+1)+'</span><div><b>'+esc(h.t)+'</b><small>'+esc([h.a,M(h).b?'~'+M(h).b+' bpm':'',M(h).k||''].filter(Boolean).join(' · '))+'</small></div></li>').reverse().join("");
+$("hs").querySelectorAll("li").forEach(li=>li.onclick=()=>{pos=+li.dataset.j;show()})}
+function next(){if(pos<hist.length-1){pos++;return show()}
+let pool=songs.filter(s=>!hist.includes(s));if(!pool.length){hist=[];pool=songs}
+hist.push(pool[Math.floor(Math.random()*pool.length)]);pos=hist.length-1;show()}
+function prev(){if(pos>0){pos--;show()}}
+$("next").onclick=next;$("prev").onclick=prev;
+document.addEventListener("keydown",e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.key==="ArrowRight")next();if(e.key==="ArrowLeft")prev()});
+function addSong(s,u){songs.push(s);W("cq_extra",(L("cq_extra")||[]).concat(s));if(vid(u)){links[id(s)]=u;W("cq_links",links)}}
+$("add").onclick=()=>{const s={a:$("fa").value.trim(),t:$("ft").value.trim(),b:+$("fb").value||0,k:$("fk").value.trim()||"?"};if(s.a&&s.t){addSong(s,$("fy").value);show()}};
+$("imp").onclick=()=>{$("bulk").value.split("\n").forEach(l=>{const[p,u]=l.split("|");const m=(p||"").split(" - ");if(m.length>=2)addSong({a:m[0].trim(),t:m.slice(1).join(" - ").trim(),b:0,k:"?"},u)});$("bulk").value="";show()};
+next();
+</script></body></html>
