@@ -77,6 +77,8 @@ aside h2{font-family:'Bowlby One',Impact,sans-serif;font-weight:400;font-size:24
 <div class="player" id="pl"></div>
 <div class="btns"><button id="prev">← Anterior</button><button class="go" id="next">Servime otro →</button><a class="btn yt" id="yt" target="_blank" rel="noopener">Ver en YouTube ↗</a></div>
 <details><summary>Agregar temas o links</summary>
+<div class="f"><input class="w" id="yk" placeholder="API key de YouTube (para que busque los videos solo)"></div><div class="btns" style="margin:10px 0 4px"><button id="yks">Guardar key</button></div>
+<div class="btns" style="margin:10px 0"><button id="exp">Exportar base</button><button id="imp2">Importar base</button><input type="file" id="fi" hidden accept=".json"><span style="align-self:center;font-weight:600;font-size:13px">Videos guardados: <b id="dbn">0</b></span></div>
 <div class="f"><input id="fa" placeholder="Artista"><input id="ft" placeholder="Título"><input id="fb" placeholder="BPM" type="number"><input id="fk" placeholder="Tono (ej. Am)"><input class="w" id="fy" placeholder="Link de YouTube (opcional)"></div>
 <div class="btns" style="margin-top:14px"><button id="add">Agregar</button></div>
 <textarea id="bulk" placeholder="Varios de una, uno por línea:&#10;Artista - Título | link de YouTube"></textarea>
@@ -101,13 +103,37 @@ const V={
 Object.entries(V).forEach(([a,l])=>l.forEach(t=>S.push([a,t,0,""])));
 const L=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},W=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 let songs=S.map(([a,t,b,k])=>({a,t,b,k})).concat(L("cq_extra")||[]);
-let links=L("cq_links")||{},hist=[],pos=-1;
+let links=Object.assign({"Chébere|Soy un Títere":"https://youtu.be/NtiF_sEIol8","Fernando Bladys|Títere":"https://youtu.be/NtiF_sEIol8","Chébere|El Mismo Tren":"https://youtu.be/UCBREwBv2Og","Fernando Bladys|El Mismo Tren":"https://youtu.be/UCBREwBv2Og"},L("cq_links")||{}),hist=[],pos=-1;
 const id=s=>s.a+"|"+s.t,$=x=>document.getElementById(x);
 const vid=u=>{const m=(u||"").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);return m&&m[1]};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 for(let i=0;i<18;i++){const b=document.createElement("span"),z=6+Math.random()*16;b.style.cssText="left:"+Math.random()*100+"%;width:"+z+"px;height:"+z+"px;animation-duration:"+(14+Math.random()*18)+"s;animation-delay:-"+Math.random()*30+"s";$("bb").appendChild(b)}
 const hid=L("cq_hide")||[];songs=songs.filter(s=>!hid.includes(id(s)));
 $("nocu").onclick=()=>{const s=hist[pos];hid.push(id(s));W("cq_hide",hid);songs=songs.filter(x=>x!==s);hist.splice(pos,1);pos--;next()};
+let yk=L("cq_yk")||"";const ytry={};
+const nm=z=>z.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const bad=/entrevista|interview|reportaje|documental|karaoke|tutorial|cover|reaccion|reaction/i;
+function best(it,s){const tw=nm(s.t).split(" ").filter(w=>w.length>2),aw=nm(s.a).split(" ")[0];
+const r=it.map(x=>{const t=nm(x.t),c=nm(x.c),h=tw.filter(w=>t.includes(w)).length/(tw.length||1);return [bad.test(x.t)||h<.7?-1:(x.o||0)+(/topic$/.test(c)?3:0)+(c.includes(aw)?2:0)+(t.includes(aw)?1:0)+h,x.id]}).filter(a=>a[0]>=0).sort((a,b)=>b[0]-a[0])[0];return r&&r[1]}
+async function viaApi(s){const u="https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=10&q="+encodeURIComponent(s.a+" "+s.t+" audio")+"&key="+encodeURIComponent(yk);
+const j=await(await fetch(u)).json();return best((j.items||[]).map(x=>({t:x.snippet.title,c:x.snippet.channelTitle,id:x.id.videoId})),s)}
+const PI=["https://pipedapi.kavin.rocks","https://pipedapi.leptons.xyz","https://api.piped.yt","https://pipedapi.adminforge.de","https://pipedapi.drgns.space","https://pipedapi.ducks.party","https://piped-api.codespace.cz","https://pipedapi.reallyaweso.me","https://api.piped.private.coffee","https://pipedapi.darkness.services","https://pipedapi.orangenet.cc","https://pipedapi-libre.kavin.rocks"];
+fetch("https://raw.githubusercontent.com/TeamPiped/documentation/main/content/docs/public-instances/index.md").then(r=>r.text()).then(t=>{(t.match(/https:\/\/[a-z0-9.\-]+/gi)||[]).filter(u=>/pipedapi|piped-api|api\.piped/.test(u)&&!PI.includes(u)).forEach(u=>PI.push(u))}).catch(()=>{});
+const tmo=(u,ms)=>{const c=new AbortController();setTimeout(()=>c.abort(),ms);return fetch(u,{signal:c.signal}).then(r=>r.json())};
+async function pj(path){for(let i=0;i<PI.length;i+=5){try{return await Promise.any(PI.slice(i,i+5).map(b=>tmo(b+path,6000).then(j=>{if(!j||!j.items)throw 0;return j})))}catch(e){}}return null}
+async function viaPiped(s){const q=encodeURIComponent(s.a+" "+s.t);
+for(const f of ["music_songs","videos"]){const j=await pj("/search?q="+q+"&filter="+f);if(!j)continue;
+const it=(j.items||[]).filter(x=>x.url&&x.url.includes("v=")).map(x=>({t:x.title||"",c:x.uploaderName||"",id:x.url.split("v=")[1].split("&")[0],o:f=="music_songs"?3:0}));
+const r=best(it,s);if(r)return r}return null}
+function dbn(){$("dbn").textContent=Object.keys(links).length}
+async function ytFind(s){const k=id(s);if(links[k]||ytry[k])return;ytry[k]=1;let v=null;
+if(yk)try{v=await viaApi(s)}catch(e){}
+if(!v)try{v=await viaPiped(s)}catch(e){}
+if(v){links[k]="https://youtu.be/"+v;W("cq_links",links);dbn();if(hist[pos]===s)show()}}
+$("yks").onclick=()=>{yk=$("yk").value.trim();W("cq_yk",yk);$("yk").value="";if(hist[pos])ytFind(hist[pos])};
+$("exp").onclick=()=>{const b=new Blob([JSON.stringify({links,meas},null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="videos.json";a.click()};
+$("imp2").onclick=()=>$("fi").click();
+$("fi").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);Object.assign(links,d.links||{});W("cq_links",links);Object.assign(meas,d.meas||{});W("cq_meas",meas);dbn();show()}).catch(()=>{})};
 const meas=L("cq_meas")||{},tried={};
 const M=s=>Object.assign({b:s.b,k:s.k},meas[id(s)]||{});
 function meta(s){const m=M(s);$("bp").textContent=m.b?(m.m?"":"~")+m.b:"?";$("ky").textContent=m.k||"?";$("ksel").value=m.k||"";document.documentElement.style.setProperty("--beat",(60/(m.b>40?m.b:120)).toFixed(3)+"s")}
@@ -142,8 +168,8 @@ $("cnt").textContent=(pos+1)+"/"+songs.length;
 tgt=lvl((pos+1)/songs.length);
 const q="https://www.youtube.com/results?search_query="+encodeURIComponent(s.a+" "+s.t+" audio oficial");
 const v=vid(links[id(s)]);$("yt").href=v?"https://youtu.be/"+v:q;
-$("pl").innerHTML=v?'<iframe src="https://www.youtube.com/embed/'+v+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>':'<div class="empty"><p>Este tema todavía no tiene video. Buscalo en YouTube, copiá el link y pegalo acá.</p><a class="btn" target="_blank" rel="noopener" href="'+q+'">Buscar en YouTube ↗</a><input id="pu" placeholder="Pegá el link acá"><button id="ps">Guardar y reproducir</button></div>';
-if(!v)$("ps").onclick=()=>{const u=$("pu").value;if(vid(u)){links[id(s)]=u;W("cq_links",links);show()}};
+$("pl").innerHTML=v?'<iframe src="https://www.youtube.com/embed/'+v+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>':'<div class="empty"><p>Buscando el video… Si no aparece, buscalo en YouTube, copiá el link y pegalo acá.</p><a class="btn" target="_blank" rel="noopener" href="'+q+'">Buscar en YouTube ↗</a><input id="pu" placeholder="Pegá el link acá"><button id="ps">Guardar y reproducir</button></div>';
+if(!v)ytFind(s);if(!v)$("ps").onclick=()=>{const u=$("pu").value;if(vid(u)){links[id(s)]=u;W("cq_links",links);show()}};
 $("hs").innerHTML=hist.map((h,j)=>'<li data-j="'+j+'" class="'+(j===pos?"on":"")+'"><span class="n">'+(j+1)+'</span><div><b>'+esc(h.t)+'</b><small>'+esc([h.a,M(h).b?'~'+M(h).b+' bpm':'',M(h).k||''].filter(Boolean).join(' · '))+'</small></div></li>').reverse().join("");
 $("hs").querySelectorAll("li").forEach(li=>li.onclick=()=>{pos=+li.dataset.j;show()})}
 function next(){if(pos<hist.length-1){pos++;return show()}
@@ -155,5 +181,7 @@ document.addEventListener("keydown",e=>{if(/INPUT|TEXTAREA/.test(e.target.tagNam
 function addSong(s,u){songs.push(s);W("cq_extra",(L("cq_extra")||[]).concat(s));if(vid(u)){links[id(s)]=u;W("cq_links",links)}}
 $("add").onclick=()=>{const s={a:$("fa").value.trim(),t:$("ft").value.trim(),b:+$("fb").value||0,k:$("fk").value.trim()||"?"};if(s.a&&s.t){addSong(s,$("fy").value);show()}};
 $("imp").onclick=()=>{$("bulk").value.split("\n").forEach(l=>{const[p,u]=l.split("|");const m=(p||"").split(" - ");if(m.length>=2)addSong({a:m[0].trim(),t:m.slice(1).join(" - ").trim(),b:0,k:"?"},u)});$("bulk").value="";show()};
+dbn();
+fetch("videos.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d)return;const cur=hist[pos],had=cur&&vid(links[id(cur)]);Object.entries(d.links||{}).forEach(([k,v])=>{if(!links[k])links[k]=v});Object.entries(d.meas||{}).forEach(([k,v])=>{if(!meas[k])meas[k]=v});dbn();if(cur&&!had&&vid(links[id(cur)]))show()}).catch(()=>{});
 next();
 </script></body></html>
